@@ -29,8 +29,8 @@ func NewSeedExecutor(command string, args []string, seeders []Seeder) *SeedExecu
 }
 
 func (s SeedExecutor) Run() {
+	mustLoadEnv()
 	connstr := os.Getenv("DATABASE_CONNSTR")
-	fmt.Printf("connstr ==== %s\n", connstr)
 
 	db, err := sqlx.Connect("postgres", connstr)
 	if err != nil {

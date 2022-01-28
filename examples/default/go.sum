@@ -15,5 +15,7 @@ github.com/version-1/goooder v0.0.0-20220128153154-f182c34c081b h1:HbVFmQvuMfgHx
 github.com/version-1/goooder v0.0.0-20220128153154-f182c34c081b/go.mod h1:h4FfZDFH+D3mFP/8qH6MiHhppz9V7iFcDfNLIyAC9p0=
 github.com/version-1/goooder v0.0.1 h1:PChXg906bUPaqjfm21WgZXJZcA6hy6WzX5QY1KYVdXI=
 github.com/version-1/goooder v0.0.1/go.mod h1:h4FfZDFH+D3mFP/8qH6MiHhppz9V7iFcDfNLIyAC9p0=
+github.com/version-1/goooder v0.0.2-rc1 h1:3Emx3Lv7fibcg3wze3WPoRsWx9aOUJuvQpAtuDDbF9I=
+github.com/version-1/goooder v0.0.2-rc1/go.mod h1:sSMCZbD0yGSUqVxkVugMfPItKISVjiyuoJu8FFWH3eI=
 github.com/version-1/goooder v0.0.2 h1:kA3VTU5NhBQ/s97SIaqrhApWOGPUSE6tPwAxaxN1CzI=
 github.com/version-1/goooder v0.0.2/go.mod h1:h4FfZDFH+D3mFP/8qH6MiHhppz9V7iFcDfNLIyAC9p0=
