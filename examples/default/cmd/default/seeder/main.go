@@ -15,8 +15,12 @@ func main() {
 	if len(args) >= 2 {
 		options = args[1:]
 	}
-	command := args[0]
+
+	command := "all"
+	if len(args) > 0 {
+		command = args[0]
+	}
 
 	executor := goooder.NewSeedExecutor(command, options, seed.Seeders)
-	executor.Exec()
+	executor.Run()
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/version-1/goooder"
 )
 
 type Seed struct {
@@ -59,7 +60,7 @@ func (s Seed_0000010_CreatePlans) Exec(tx *sqlx.DB) error {
 	return nil
 }
 
-func (s Seed_0000020_CreateStripeItems) Seed_0000020_CreateStripeItems(tx *sqlx.DB) error {
+func (s Seed_0000020_CreateStripeItems) Exec(tx *sqlx.DB) error {
 	obj := map[string][]string{
 		"PL-000001": {"prod_Jet9M0T0XgHjxJ", "price_1J1ZN8IoZNZEhIpWRoO6451P"},
 		"PL-000002": {"prod_JewIAAP9UBDyPB", "price_1J1cQCIoZNZEhIpWNPWFeaZX"},
@@ -72,7 +73,7 @@ func (s Seed_0000020_CreateStripeItems) Seed_0000020_CreateStripeItems(tx *sqlx.
 		return err
 	}
 
-	rows, err := s.db.Query("SELECT id, display_id FROM plans")
+	rows, err := tx.Query("SELECT id, display_id FROM plans")
 	if err != nil {
 		return err
 	}
@@ -92,7 +93,7 @@ func (s Seed_0000020_CreateStripeItems) Seed_0000020_CreateStripeItems(tx *sqlx.
 	return nil
 }
 
-func (s Seed_0000030_CreateMaterials) Seed_0000030_CreateMaterials(tx *sqlx.DB) error {
+func (s Seed_0000030_CreateMaterials) Exec(tx *sqlx.DB) error {
 	const MATERIAL_TYPE_CHALLENGE = 1000
 	const MATERIAL_TYPE_TEXT = 2000
 	const MATERIAL_TYPE_QUIZ = 3000
