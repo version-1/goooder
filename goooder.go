@@ -29,7 +29,10 @@ func NewSeedExecutor(command string, args []string, seeders []Seeder) *SeedExecu
 }
 
 func (s SeedExecutor) Run() {
-	db, err := sqlx.Connect("postgres", os.Getenv("DATABASE_URL"))
+	connstr := os.Getenv("DATABASE_CONNSTR")
+	fmt.Printf("connstr ==== %s\n", connstr)
+
+	db, err := sqlx.Connect("postgres", connstr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,7 +57,7 @@ func (s SeedExecutor) Run() {
 func mustLoadEnv() {
 	var err error
 	var envfile string
-	env := os.Getenv("GOOOMA_ENV")
+	env := os.Getenv("GOOODER_ENV")
 	if "" == env {
 		err = godotenv.Load()
 		envfile = ".env"
