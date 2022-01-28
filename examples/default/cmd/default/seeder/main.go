@@ -4,7 +4,7 @@ import (
 	"flag"
 
 	"github.com/version-1/default/db/seeders/development"
-	goooder "github.com/version-1/goooder/internal/seeder"
+	"github.com/version-1/goooder"
 )
 
 func main() {

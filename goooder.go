@@ -1,4 +1,4 @@
-package seeder
+package goooder
 
 import (
 	"fmt"
