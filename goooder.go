@@ -3,45 +3,38 @@ package goooder
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/version-1/goooder/config"
 )
 
 type SeedExecutor struct {
-	command string
-	args    []string
-	seeders []Seeder
+	config.Config
 }
 
-type Seeder interface {
-	Exec(db *sqlx.DB) error
-}
-
-func NewSeedExecutor(command string, args []string, seeders []Seeder) *SeedExecutor {
+func NewSeedExecutor(config config.Config) *SeedExecutor {
 	return &SeedExecutor{
-		command: command,
-		args:    args,
-		seeders: seeders,
+		Config: config,
 	}
 }
 
-func (s SeedExecutor) Run() {
-	mustLoadEnv()
-	connstr := os.Getenv("DATABASE_CONNSTR")
-
-	db, err := sqlx.Connect("postgres", connstr)
+func (s SeedExecutor) Run(name ...string) {
+	db, err := sqlx.Connect("postgres", s.Connstr())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, seed := range s.seeders {
-		tx := db.MustBegin()
-		name := fmt.Sprintf("%T", seed)
-		if s.command == "all" || (s.command == "single" && name == s.args[0]) {
-			fmt.Printf("====== %T\n", seed)
+	_name := ""
+	if len(name) > 0 {
+		_name = name[0]
+	}
+
+	tx := db.MustBegin()
+	for _, seed := range s.Seeders() {
+		seedName := fmt.Sprintf("%T", seed)
+		if _name == "" || _name == seedName {
+			fmt.Printf("====== %s\n", seedName)
 
 			err := seed.Exec(db)
 			if err != nil {
@@ -49,24 +42,7 @@ func (s SeedExecutor) Run() {
 				tx.Rollback()
 				return
 			}
-			tx.Commit()
 		}
 	}
-}
-
-func mustLoadEnv() {
-	var err error
-	var envfile string
-	env := os.Getenv("GOOODER_ENV")
-	if "" == env {
-		err = godotenv.Load()
-		envfile = ".env"
-	} else {
-		envfile = ".env" + env
-		err = godotenv.Load(envfile)
-	}
-
-	if err != nil {
-		log.Fatalf("Error loading %s\n", envfile)
-	}
+	tx.Commit()
 }
