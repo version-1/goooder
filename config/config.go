@@ -15,8 +15,11 @@ type Seeder interface {
 	Exec(tx *sqlx.Tx) error
 }
 
+type Renderer interface {
+	RenderTemplate(filename string) (string, error)
+}
+
 type Config interface {
-	TemplatePath() string
 	Connstr() string
 	Seeders() []Seeder
 }
@@ -24,10 +27,6 @@ type Config interface {
 type EnvConfig struct {
 	connstr string
 	seeders []Seeder
-}
-
-func (e EnvConfig) TemplatePath() string {
-	return os.Getenv("TEMPLATE_PATH")
 }
 
 func (e EnvConfig) Connstr() string {
@@ -38,13 +37,16 @@ func (e EnvConfig) Seeders() []Seeder {
 	return e.seeders
 }
 
-func FromEnv(seeders []Seeder) *EnvConfig {
+func FromEnv() *EnvConfig {
 	mustLoadEnv()
 
 	return &EnvConfig{
 		connstr: os.Getenv("DATABASE_CONNSTR"),
-		seeders: seeders,
 	}
+}
+
+func (e *EnvConfig) SetSeeders(seeders []Seeder) {
+	e.seeders = seeders
 }
 
 func mustLoadEnv() {

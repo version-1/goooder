@@ -2,7 +2,10 @@ package seeder
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
+	"os"
+	"path/filepath"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/version-1/goooder/config"
@@ -14,11 +17,18 @@ type Renderer struct {
 
 func NewRenderer(pathGlob ...string) *Renderer {
 	path := "db/seeders/development/templates/*.sql"
-	if len(pathGlob) > 0 {
+	if len(pathGlob) > 0 && len(pathGlob[0]) > 0 {
 		path = pathGlob[0]
 	}
 
-	tmpl := template.Must(template.ParseGlob(path))
+	rootPath, err := LookUpFileInAncestors(".", "go.mod")
+	if err != nil {
+		panic(err)
+	}
+
+	glob := fmt.Sprintf("%s/%s", rootPath, path)
+
+	tmpl := template.Must(template.ParseGlob(glob))
 
 	return &Renderer{
 		tmpl: tmpl,
@@ -49,26 +59,32 @@ type Seed struct {
 	seeders []config.Seeder
 }
 
-func New() *Seed {
+func New(r *Renderer) *Seed {
 	return &Seed{
-		r: NewRenderer(),
+		r: r,
 	}
 }
 
-func (s *Seed) Seeders() []config.Seeder {
-	return s.seeders
-}
-
-func (s *Seed) Append(factory func(r *Renderer) config.Seeder) {
-	s.seeders = append(s.seeders, factory(s.r))
-}
-
-type Receiver interface {
-	With(r *Renderer) config.Seeder
-}
-
-func (s *Seed) BatchAppend(factory []Receiver) {
-	for _, f := range factory {
-		s.seeders = append(s.seeders, f.With(s.r))
+func LookUpFileInAncestors(path, filename string) (string, error) {
+	entries, err := os.ReadDir(path)
+	if err != nil {
+		return "", err
 	}
+
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return "", err
+	}
+	if absPath == "/" {
+		return "", fmt.Errorf("file not found in ancestors: %s", filename)
+	}
+
+	for _, e := range entries {
+		if !e.IsDir() && e.Name() == filename {
+			return absPath, nil
+		}
+	}
+
+	parent := fmt.Sprintf("../%s", path)
+	return LookUpFileInAncestors(parent, filename)
 }

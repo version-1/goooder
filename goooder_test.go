@@ -11,10 +11,6 @@ import (
 
 type config struct{}
 
-func (c config) TemplatePath() string {
-	return ""
-}
-
 func (c config) Connstr() string {
 	return "postgres://postgres:password@127.0.0.1:54321/example?sslmode=disable"
 }
@@ -67,11 +63,15 @@ func TestAllSeed(t *testing.T) {
 
 func TestEnvConfigSeed(t *testing.T) {
 	called = []string{}
-	conf := gdconfig.FromEnv([]gdconfig.Seeder{
+	conf := gdconfig.FromEnv()
+	seeders := []gdconfig.Seeder{
 		&seed_001{},
 		&seed_002{},
 		&seed_003{},
-	})
+	}
+
+	conf.SetSeeders(seeders)
+
 	executor := NewSeedExecutor(conf)
 	executor.Run()
 

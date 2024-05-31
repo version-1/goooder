@@ -42,7 +42,6 @@ func (s SeedExecutor) Run(name ...string) {
 			if err != nil {
 				fmt.Printf("Error!: %s\n", err.Error())
 				tx.Rollback()
-				fmt.Println("@@@@@@@@@@@@@")
 				return
 			}
 		}

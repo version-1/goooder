@@ -10,24 +10,17 @@ type Seed struct {
 	Seeders []config.Seeder
 }
 
-func NewSeed() *seeder.Seed {
-	s := seeder.New()
+func NewSeeders(r *seeder.Renderer) []config.Seeder {
+	seeders := []config.Seeder{
+		&Seed_0000010_CreateUsers{r},
+		&Seed_0000020_CreateProfiles{r},
+	}
 
-	s.BatchAppend([]seeder.Receiver{
-		&Seed_0000010_CreateUsers{},
-		&Seed_0000020_CreateProfiles{},
-	})
-
-	return s
+	return seeders
 }
 
 type Seed_0000010_CreateUsers struct {
 	*seeder.Renderer
-}
-
-func (s *Seed_0000010_CreateUsers) With(r *seeder.Renderer) config.Seeder {
-	s.Renderer = r
-	return s
 }
 
 func (s *Seed_0000010_CreateUsers) Exec(tx *sqlx.Tx) error {
@@ -36,11 +29,6 @@ func (s *Seed_0000010_CreateUsers) Exec(tx *sqlx.Tx) error {
 
 type Seed_0000020_CreateProfiles struct {
 	*seeder.Renderer
-}
-
-func (s *Seed_0000020_CreateProfiles) With(r *seeder.Renderer) config.Seeder {
-	s.Renderer = r
-	return s
 }
 
 func (s *Seed_0000020_CreateProfiles) Exec(tx *sqlx.Tx) error {
