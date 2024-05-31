@@ -1,73 +1,48 @@
 package development
 
 import (
-	"bytes"
-	"html/template"
-
 	"github.com/jmoiron/sqlx"
 	"github.com/version-1/goooder/config"
+	"github.com/version-1/goooder/seeder"
 )
 
 type Seed struct {
 	Seeders []config.Seeder
 }
 
-type Renderer struct {
-	tmpl *template.Template
-}
+func NewSeed() *seeder.Seed {
+	s := seeder.New()
 
-func (r Renderer) RenderTemplate(filename string) (string, error) {
-	buf := new(bytes.Buffer)
-	if err := r.tmpl.ExecuteTemplate(buf, filename, struct{}{}); err != nil {
-		return "", err
-	}
+	s.BatchAppend([]seeder.Receiver{
+		&Seed_0000010_CreateUsers{},
+		&Seed_0000020_CreateProfiles{},
+	})
 
-	return buf.String(), nil
-}
-
-func NewRenderer() *Renderer {
-	tmpl := template.Must(template.ParseGlob("db/seeders/development/templates/*.sql"))
-
-	return &Renderer{
-		tmpl: tmpl,
-	}
-}
-
-func NewSeed() *Seed {
-	tmpl := NewRenderer()
-
-	return &Seed{
-		Seeders: []config.Seeder{
-			Seed_0000010_CreateUsers{r: tmpl},
-			Seed_0000020_CreateFollows{r: tmpl},
-		},
-	}
+	return s
 }
 
 type Seed_0000010_CreateUsers struct {
-	r *Renderer
+	*seeder.Renderer
 }
 
-func (s Seed_0000010_CreateUsers) Exec(tx *sqlx.DB) error {
-	query, err := s.r.RenderTemplate("create_users.sql")
-	if err != nil {
-		return err
-	}
-
-	tx.MustExec(query)
-	return nil
+func (s *Seed_0000010_CreateUsers) With(r *seeder.Renderer) config.Seeder {
+	s.Renderer = r
+	return s
 }
 
-type Seed_0000020_CreateFollows struct {
-	r *Renderer
+func (s *Seed_0000010_CreateUsers) Exec(tx *sqlx.Tx) error {
+	return s.Renderer.ExecWithFilename(tx, "create_users.sql")
 }
 
-func (s Seed_0000020_CreateFollows) Exec(tx *sqlx.DB) error {
-	query, err := s.r.RenderTemplate("create_follows.sql")
-	if err != nil {
-		return err
-	}
+type Seed_0000020_CreateProfiles struct {
+	*seeder.Renderer
+}
 
-	tx.MustExec(query)
-	return nil
+func (s *Seed_0000020_CreateProfiles) With(r *seeder.Renderer) config.Seeder {
+	s.Renderer = r
+	return s
+}
+
+func (s *Seed_0000020_CreateProfiles) Exec(tx *sqlx.Tx) error {
+	return s.Renderer.ExecWithFilename(tx, "create_profiles.sql")
 }

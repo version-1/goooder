@@ -12,10 +12,11 @@ import (
 var _ Config = (*EnvConfig)(nil)
 
 type Seeder interface {
-	Exec(db *sqlx.DB) error
+	Exec(tx *sqlx.Tx) error
 }
 
 type Config interface {
+	TemplatePath() string
 	Connstr() string
 	Seeders() []Seeder
 }
@@ -23,6 +24,10 @@ type Config interface {
 type EnvConfig struct {
 	connstr string
 	seeders []Seeder
+}
+
+func (e EnvConfig) TemplatePath() string {
+	return os.Getenv("TEMPLATE_PATH")
 }
 
 func (e EnvConfig) Connstr() string {

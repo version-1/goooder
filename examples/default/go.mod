@@ -1,10 +1,15 @@
 module github.com/version-1/default
 
-go 1.16
+go 1.22
 
 require (
-	github.com/gofrs/uuid v4.2.0+incompatible
-	github.com/jmoiron/sqlx v1.3.4
-	github.com/lib/pq v1.10.4 // indirect
-	github.com/version-1/goooder v0.0.2-rc2
+	github.com/jmoiron/sqlx v1.4.0
+	github.com/version-1/goooder v0.1.0
 )
+
+require (
+	github.com/joho/godotenv v1.5.1 // indirect
+	github.com/lib/pq v1.10.9 // indirect
+)
+
+replace github.com/version-1/goooder => ../../.

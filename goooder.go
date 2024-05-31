@@ -3,17 +3,18 @@ package goooder
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"github.com/version-1/goooder/config"
+	gdconfig "github.com/version-1/goooder/config"
 )
 
 type SeedExecutor struct {
-	config.Config
+	gdconfig.Config
 }
 
-func NewSeedExecutor(config config.Config) *SeedExecutor {
+func NewSeedExecutor(config gdconfig.Config) *SeedExecutor {
 	return &SeedExecutor{
 		Config: config,
 	}
@@ -31,15 +32,17 @@ func (s SeedExecutor) Run(name ...string) {
 	}
 
 	tx := db.MustBegin()
+
 	for _, seed := range s.Seeders() {
 		seedName := fmt.Sprintf("%T", seed)
-		if _name == "" || _name == seedName {
+		if _name == "" || strings.HasSuffix(seedName, _name) {
 			fmt.Printf("====== %s\n", seedName)
 
-			err := seed.Exec(db)
+			err := seed.Exec(tx)
 			if err != nil {
 				fmt.Printf("Error!: %s\n", err.Error())
 				tx.Rollback()
+				fmt.Println("@@@@@@@@@@@@@")
 				return
 			}
 		}

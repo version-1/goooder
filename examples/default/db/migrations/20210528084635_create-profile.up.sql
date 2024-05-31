@@ -4,7 +4,7 @@ CREATE TABLE profiles (
   description text NOT NULL,
   avatar_id uuid,
   avatar json,
-  location json NOT NULL,
+  location varchar NOT NULL,
 
   created_at timestamp NOT NULL DEFAULT NOW(),
   updated_at timestamp NOT NULL DEFAULT NOW()

@@ -9,7 +9,7 @@ import (
 func main() {
 	seed := development.NewSeed()
 
-	conf := gdconfig.FromEnv(seed.Seeders)
+	conf := gdconfig.FromEnv(seed.Seeders())
 
 	executor := goooder.NewSeedExecutor(conf)
 	executor.Run()
