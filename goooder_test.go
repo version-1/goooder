@@ -15,6 +15,10 @@ func (c config) Connstr() string {
 	return "postgres://postgres:password@127.0.0.1:54321/example?sslmode=disable"
 }
 
+func (c config) Logger() gdconfig.Logger {
+	return gdconfig.DefaultLogger{}
+}
+
 func (c config) Seeders() []gdconfig.Seeder {
 	return []gdconfig.Seeder{
 		&seed_001{},

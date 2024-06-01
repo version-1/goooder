@@ -19,6 +19,10 @@ func (c config) Seeders() []gdconfig.Seeder {
 	return c.seeders
 }
 
+func (c config) Logger() gdconfig.Logger {
+	return &gdconfig.DefaultLogger{}
+}
+
 func main() {
 	r := seeder.NewRenderer()
 	conf := config{
